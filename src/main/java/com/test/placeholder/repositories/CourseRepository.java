@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseRepository extends JpaRepository<Course,Integer> {
-    Page<Course> findAllByOrderByCreationDateDesc(Pageable pageable);
+    Page<Course> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

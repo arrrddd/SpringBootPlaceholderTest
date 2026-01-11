@@ -54,7 +54,7 @@ public class CourseServiceTest {
         Page<Course> coursePage = new PageImpl<>(courseList, pageable, courseList.size());
 
         // Mock
-        when(repository.findAllByOrderByCreationDateDesc(pageable)).thenReturn(coursePage);
+        when(repository.findAllByOrderByCreatedAtDesc(pageable)).thenReturn(coursePage);
 
         // Act
         Page<Course> result = service.GetLatestPage(page, size);
@@ -64,7 +64,7 @@ public class CourseServiceTest {
         assertEquals(2, result.getContent().size());
         assertEquals(coursePage, result); // exactly the same page returned
         verify(repository, times(1))
-                .findAllByOrderByCreationDateDesc(pageable);
+                .findAllByOrderByCreatedAtDesc(pageable);
 
         LocalDateTime firstDate = result.getContent().get(0).getCreatedAt();
         LocalDateTime secondDate = result.getContent().get(1).getCreatedAt();

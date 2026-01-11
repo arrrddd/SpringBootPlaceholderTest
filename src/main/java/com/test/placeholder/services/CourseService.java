@@ -19,6 +19,6 @@ public class CourseService {
 
     public Page<Course> GetLatestPage(int page, int size){
         Pageable pageable = PageRequest.of(page,size);
-        return repository.findAllByOrderByCreationDateDesc(pageable);
+        return repository.findAllByOrderByCreatedAtDesc(pageable);
     }
 }
