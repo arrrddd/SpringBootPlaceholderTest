@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseRepository extends JpaRepository<Course,Integer> {
     Page<Course> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    Page<Course> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }
