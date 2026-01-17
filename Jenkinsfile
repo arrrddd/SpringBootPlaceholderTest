@@ -2,11 +2,6 @@ pipeline {
     // 1. Start on the host machine first so we can set up our tools
     agent any
 
-    tools {
-        // 2. Jenkins downloads the Docker CLI here
-        docker 'docker'
-    }
-
     environment {
         DOCKER_IMAGE = 'my-app/placeholder'
     }
