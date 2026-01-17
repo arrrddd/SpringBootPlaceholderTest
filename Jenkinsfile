@@ -1,10 +1,10 @@
 pipeline {
-    agent {
-        docker {
-            // Use a Docker image that has both Java 21 and Maven installed
-            image 'maven:3.9.6-eclipse-temurin-21'
-            args '-v $HOME/.m2:/root/.m2'
-        }
+    // 1. Start on the host machine first so we can set up our tools
+    agent any
+
+    tools {
+        // 2. Jenkins downloads the Docker CLI here
+        docker 'docker'
     }
 
     environment {
@@ -13,6 +13,13 @@ pipeline {
 
     stages {
         stage('Build & Unit Test') {
+            // 3. Move the Maven container requirement here
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-21'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn clean package'
             }
@@ -32,6 +39,13 @@ pipeline {
         }
 
         stage('Mutation Testing') {
+            // Run this in the same Maven container
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-21'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             when {
                 branch 'main'
             }
@@ -53,12 +67,9 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            //exit Maven container
-            agent any
+            // 4. This stage uses 'agent any' by default (stepping out to your PC)
             steps {
                 script {
-                    // Build the image using the Dockerfile in the root
-                    // We use the jar built in the previous stage (workspace is shared)
                     sh 'docker build -t ${DOCKER_IMAGE}:latest -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .'
                     sh 'docker image prune -f'
                 }
@@ -67,11 +78,7 @@ pipeline {
     }
 
     post {
-        failure {
-            echo 'Pipeline failed!'
-        }
-        success {
-            echo 'Pipeline succeeded!'
-        }
+        failure { echo 'Pipeline failed!' }
+        success { echo 'Pipeline succeeded!' }
     }
 }
